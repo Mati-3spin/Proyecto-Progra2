@@ -51,8 +51,14 @@ def consultar_categoria():
         categorias = session.scalars(consulta).all()
         if not categorias:
             return False, "La categoria no existe"
+        lista_categorias = []
         for categoria in categorias:
-            return categoria.id, categoria.nombre, categoria.descripcion #ERROR A ARREGLAR, AÑADIR LISTA ORDENADA A ENTREGAR
+            lista_categorias.append((
+                categoria.id,
+                categoria.nombre,
+                categoria.descripcion
+            ))
+        return lista_categorias
 
 def consultar_equipo():
     with Session() as session:
@@ -60,17 +66,33 @@ def consultar_equipo():
         equipos = session.scalars(consulta).all()
         if not equipos:
             return False, "El equipo no existe"
+        lista_equipos = []
         for equipo in equipos:
-            return equipo.id, equipo.nombre, equipo.categoria_id, equipo.precio_diario, equipo.stock_total, equipo.stock_disponible
-#ERROR A ARREGLAR, AÑADIR LISTA ORDENADA A ENTREGAR
+            lista_equipos.append((
+                equipo.id,
+                equipo.nombre,
+                equipo.categoria_id,
+                equipo.precio_diario,
+                equipo.stock_total,
+                equipo.stock_disponible
+            ))
+        return lista_equipos
+
 def consultar_cliente():
     with Session() as session:
         consulta = select(Cliente)
         clientes = session.scalars(consulta).all()
         if not clientes:
             return False, "El cliente no existe"
+        lista_clientes = []
         for cliente in clientes:
-            return cliente.id, cliente.nombre, cliente.correo, cliente.telefono#ERROR A ARREGLAR, AÑADIR LISTA ORDENADA A ENTREGAR
+            lista_clientes.append((
+                cliente.id,
+                cliente.nombre,
+                cliente.correo,
+                cliente.telefono
+            ))
+        return lista_clientes
 
 # Actualizar
 
