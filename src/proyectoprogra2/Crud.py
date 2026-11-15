@@ -49,70 +49,61 @@ def consultar_categoria():
     with Session() as session:
         consulta = select(Categoria)
         categorias = session.scalars(consulta).all()
-
         if not categorias:
-            print("No hay categorias registradas")
-            return
+            return False, "La categoria no existe"
         for categoria in categorias:
-            return categoria.id, categoria.nombre, categoria.descripcion
+            return categoria.id, categoria.nombre, categoria.descripcion #ERROR A ARREGLAR, AÑADIR LISTA ORDENADA A ENTREGAR
 
 def consultar_equipo():
     with Session() as session:
-        consulta1 = select(Equipo)
-        equipos = session.scalars(consulta1).all()
-
+        consulta = select(Equipo)
+        equipos = session.scalars(consulta).all()
         if not equipos:
-            print("No hay equipos registrados")
-            return
+            return False, "El equipo no existe"
         for equipo in equipos:
             return equipo.id, equipo.nombre, equipo.categoria_id, equipo.precio_diario, equipo.stock_total, equipo.stock_disponible
-
-
+#ERROR A ARREGLAR, AÑADIR LISTA ORDENADA A ENTREGAR
+def consultar_cliente():
+    with Session() as session:
+        consulta = select(Cliente)
+        clientes = session.scalars(consulta).all()
+        if not clientes:
+            return False, "El cliente no existe"
+        for cliente in clientes:
+            return cliente.id, cliente.nombre, cliente.correo, cliente.telefono#ERROR A ARREGLAR, AÑADIR LISTA ORDENADA A ENTREGAR
 
 # Actualizar
 
 def actualizar_categoria(in_id_categoria, in_nombre, in_descripcion):
     with Session.begin() as session:
-        #Buscar producto con ID
         categoria = session.get(Categoria, in_id_categoria)
-
         if categoria is None:
-            print("Categoria no encontrada")
-            return
-
-        categoria.in_nombre = in_nombre
-        categoria.in_descripcion = in_descripcion
-    print("Categoria actulizado")
+            return False, "Categoria no encontrada"
+        categoria.nombre = in_nombre
+        categoria.descripcion = in_descripcion
+    return True, "Categoria Actualizada"
 
 def actualizar_equipo(in_id_equipo, in_nombre, in_categoria_id, in_precio_diario, in_stock_total, in_stock_disponible):
     with Session.begin() as session:
-        #Buscar producto con ID
         equipo = session.get(Equipo, in_id_equipo)
-
         if equipo is None:
-            print("Equipo no encontrado")
-            return
-
-        equipo.in_nombre = in_nombre
-        equipo.in_categoria_id = in_categoria_id
-        equipo.in_precio_diario = in_precio_diario
-        equipo.in_stock_total = in_stock_total
-        equipo.in_stock_disponible=in_stock_disponible
-    print("Equipo actualizado")
+            return False, "Equipo no encontrado"
+        equipo.nombre = in_nombre
+        equipo.categoria_id = in_categoria_id
+        equipo.precio_diario = in_precio_diario
+        equipo.stock_total = in_stock_total
+        equipo.stock_disponible=in_stock_disponible
+    return True, "Equipo Actualizado"
 
 def actualizar_cliente(in_id_cliente, in_nombre, in_correo, in_telefono):
     with Session.begin() as session:
-        #Buscar producto con ID
         cliente = session.get(Cliente, in_id_cliente)
-
         if cliente is None:
-            print("Cliente no encontrado")
-            return
-
-        cliente.in_nombre = in_nombre
-        cliente.in_correo = in_correo
-        cliente.in_telefono = in_telefono
-    print("Cliente actulizado")
+            return False, "Cliente no encontrado"
+        cliente.nombre = in_nombre
+        cliente.correo = in_correo
+        cliente.telefono = in_telefono
+    return True, "Cliente Actualizado"
 
 # Eliminar
 
@@ -120,30 +111,30 @@ def eliminar_categoria(in_id_categoria):
     with Session.begin() as session:
         categoria = session.get(Categoria, in_id_categoria)
         if categoria is None:
-            return "Categoria no encontrada"
+            return False, "Categoria no encontrada"
         session.delete(categoria)
-    print("Categoria eliminada")
+    return True, "Categoria eliminada"
 
 def eliminar_equipo(in_id_equipo):
     with Session.begin() as session:
         equipo = session.get(Equipo, in_id_equipo)
         if equipo is None:
-            return "Equipo no encontrado"
+            return False, "Equipo no encontrado"
         session.delete(equipo)
-    print("Equipo eliminado")
+    return True, "Equipo eliminado"
 
 def eliminar_cliente(in_id_cliente):
     with Session.begin() as session:
         cliente = session.get(Cliente, in_id_cliente)
         if cliente is None:
-            return "Cliente no encontrado"
+            return False, "Cliente no encontrado"
         session.delete(cliente)
-    print("Cliente eliminado")
+    return True, "Cliente eliminado"
 
 def eliminar_arriendo(in_id_arriendo):
     with Session.begin() as session:
         arriendo = session.get(Arriendo, in_id_arriendo)
         if arriendo is None:
-            return "Arriendo no encontrado"
+            return False, "Arriendo no encontrado"
         session.delete(arriendo)
-    print("Arriendo eliminado")
+    return True, "Arriendo eliminado"
