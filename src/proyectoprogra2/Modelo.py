@@ -1,5 +1,5 @@
-from datetime import date
-from sqlalchemy import String, Integer, CheckConstraint, ForeignKey, Date
+from datetime import datetime
+from sqlalchemy import String, Integer, CheckConstraint, ForeignKey, DateTime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 class Base(DeclarativeBase):
@@ -26,7 +26,7 @@ class Equipo(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    nombre: Mapped[str] = mapped_column(String(100), nullable=False)
+    nombre: Mapped[str] = mapped_column(String(100), unique=True , nullable=False)
     categoria_id: Mapped[int] = mapped_column(Integer, ForeignKey('categoria.id'), nullable=False)   
     precio_diario: Mapped[str] = mapped_column(Integer, default=0, nullable=False)   
     stock_total: Mapped[str] = mapped_column(Integer, default=0, nullable=False) 
@@ -36,7 +36,6 @@ class Equipo(Base):
 
     def __repr__(self):
         return (f"Equipo (id={self.id}, nombre={self.nombre}), categoria_id={self.categoria_id}, precio_diario={self.precio_diario}, stock_total={self.stock_total}, stock_disponible={self.stock_disponible}")
-    
 
 
 class Cliente(Base):
@@ -62,10 +61,10 @@ class Arriendo(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     equipo_id: Mapped[int] = mapped_column(Integer, ForeignKey('equipo.id'), nullable=False)   
     cliente_id: Mapped[int] = mapped_column(Integer, ForeignKey('cliente.id'), nullable=False)   
-    fecha_inicio: Mapped[date] = mapped_column(Date, nullable=False)
-    fecha_fin_prevista: Mapped[date] = mapped_column(Date, nullable=False)   
+    fecha_inicio: Mapped[datetime] = mapped_column(DateTime, unique=True , nullable=False)
+    fecha_fin_prevista: Mapped[datetime] = mapped_column(DateTime, unique=True, nullable=False)   
     cantidad: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
-    estado: Mapped[str] = mapped_column(String(20), default="activo" , nullable=False)
+    estado: Mapped[str] = mapped_column(String(20), default="activo", nullable=False)
 
     equipo = relationship("Equipo")
     cliente = relationship("Cliente")
