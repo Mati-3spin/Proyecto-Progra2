@@ -94,6 +94,25 @@ def consultar_cliente():
             ))
         return lista_clientes
 
+def consultar_arriendo():
+    with Session() as session:
+        consulta = select(Arriendo)
+        arriendos = session.scalars(consulta).all()
+        if not arriendos:
+            return False, "El arriendo no existe"
+        lista_arriendos = []
+        for arriendo in arriendos:
+            lista_arriendos.append((
+                arriendo.id,
+                arriendo.equipo_id,
+                arriendo.cliente_id,
+                arriendo.fecha_inicio,
+                arriendo.fecha_fin_prevista,
+                arriendo.cantidad,
+                arriendo.estado
+            ))
+        return lista_arriendos
+
 # Actualizar
 
 def actualizar_categoria(in_id_categoria, in_nombre, in_descripcion):
