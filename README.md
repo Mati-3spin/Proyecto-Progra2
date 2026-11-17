@@ -1,7 +1,7 @@
 # Evaluación Final - Proyecto 3
 
 * **Curso :** Programación 2 - ICINF1109
-* **Integrantes :** Matias
+* **Integrantes :** Matias Espinoza, Annan John
 * **Docente :** Pedro Gaete Villegas
 
 ## Problema Planteado 
@@ -10,7 +10,7 @@
 >procesar devoluciones. Los datos deben mantenerse en una base SQLite mediante SQLAlchemy ORM. 
 
 ## Dependencias
-**sqlalchemy**: 2.1.9 en adelante
+**sqlalchemy**: 2.1.9
 **matplotlib**: 3.11.2
 **sqlite3** 
 
@@ -21,13 +21,13 @@ ProyectoProgra2/
 ├── README.md
 ├── ui/        # ventanas/pestañas Tkinter
 ├── charts.py  # consultas y gráficos
-└── src/proyectoprogra2/
-        ├── Conexion.py
-        ├── __init__.py
-        ├── Modelo.py     
-        ├── Factory.py # Factory Method
-        ├── main.py     
-        └── Servicios/     arrendar, devolver, CRUD, validaciones
-            ├── Crud.py
-            └── Validacion.py 
+└── src/
+    ├── Conexion.py
+    ├── __init__.py
+    ├── Modelo.py     
+    ├── Factory.py
+    ├── main.py     
+    └── Servicios/    
+        ├── Crud.py
+        └── Validacion.py 
 ```
