@@ -19,15 +19,15 @@
 ProyectoProgra2/
 ├── pyproject.toml
 ├── README.md
-├── ui/        # ventanas/pestañas Tkinter
-├── charts.py  # consultas y gráficos
+├── ui.py       # ventanas/pestañas Tkinter
+├── .gitignore
 └── src/
+    ├── charts.py
     ├── Conexion.py
     ├── __init__.py
     ├── Modelo.py     
     ├── Factory.py
-    ├── main.py     
-    └── Servicios/    
-        ├── Crud.py
-        └── Validacion.py 
+    ├── main.py         
+    ├── Crud.py
+    └── Validacion.py 
 ```
