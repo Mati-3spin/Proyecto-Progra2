@@ -146,6 +146,18 @@ def actualizar_cliente(in_id_cliente, in_nombre, in_correo, in_telefono):
         cliente.telefono = in_telefono
     return True, "Cliente Actualizado"
 
+def actualizar_arriendo(in_id_arriendo, in_equipo_id, in_cliente_id, in_fecha_inicio, in_fecha_fin_prevista, in_estado):
+    with Session.begin() as session:
+        arriendo = session.get(Arriendo, in_id_arriendo)
+        if arriendo is None:
+            return False, "Arriendo no encontrado"
+        arriendo.equipo_id = in_equipo_id
+        arriendo.cliente_id = in_cliente_id
+        arriendo.fecha_inicio = in_fecha_inicio
+        arriendo.fecha_fin_prevista = in_fecha_fin_prevista
+        arriendo.estado = in_estado
+    return True, "Arriendo Actualizado"
+
 # Eliminar
 
 def eliminar_categoria(in_id_categoria):
