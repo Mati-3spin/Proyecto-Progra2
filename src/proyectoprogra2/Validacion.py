@@ -1,4 +1,5 @@
-
+from datetime import timezone
+import re
 def validar_texto(cadena):
     if cadena.strip() == "":
         return False, "El elemento debe existir"
@@ -6,7 +7,7 @@ def validar_texto(cadena):
 
 def validar_cantidad(cantidad):
     if cantidad < 1:
-        return False, "La cantidad debe ser mínimo 1."
+        return False, "La cantidad debe ser como mínimo 1."
     return True
 
 def validar_stock(entero):
@@ -16,5 +17,20 @@ def validar_stock(entero):
 
 def validar_estado(estado):
     if not estado.lower() == "activo" or not estado.lower() == "devuelto":
-        return False, "Estado no valido, debe ser activo o devuelto"
+        return False, "Estado invalido, debe ser activo o devuelto"
     return True
+
+def validar_telefono(numero):
+    patron = r"^(\+?56)?(\s?)9\d{8}$"
+    if not re.match(patron, numero):
+        return False, "Número invalido para el estandar de Chile"
+    return True
+
+def validar_correo(correo):
+    patron = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if not re.match(patron, correo):
+        return False, "Ingrese un correo valido, como zramirez123@ejemplo.cl"
+    return True
+
+def validar_fecha(fecha):
+        return False, "Ingrese su fecha en formato AAAA:MM:DD"

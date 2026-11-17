@@ -1,5 +1,5 @@
-from datetime import datetime
-from sqlalchemy import String, Integer, CheckConstraint, ForeignKey, DateTime
+from datetime import date
+from sqlalchemy import String, Integer, CheckConstraint, ForeignKey, Date
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 class Base(DeclarativeBase):
@@ -61,8 +61,8 @@ class Arriendo(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     equipo_id: Mapped[int] = mapped_column(Integer, ForeignKey('equipo.id'), nullable=False)   
     cliente_id: Mapped[int] = mapped_column(Integer, ForeignKey('cliente.id'), nullable=False)   
-    fecha_inicio: Mapped[datetime] = mapped_column(DateTime, unique=True , nullable=False)
-    fecha_fin_prevista: Mapped[datetime] = mapped_column(DateTime, unique=True, nullable=False)   
+    fecha_inicio: Mapped[date] = mapped_column(Date, unique=True , nullable=False)
+    fecha_fin_prevista: Mapped[date] = mapped_column(Date, unique=True, nullable=False)   
     cantidad: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     estado: Mapped[str] = mapped_column(String(20), default="activo", nullable=False)
 
