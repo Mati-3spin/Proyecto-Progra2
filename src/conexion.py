@@ -9,7 +9,7 @@ engine = create_engine(f"sqlite:///{RUTA_BD}", echo=False)
 
 
 @event.listens_for(engine, "connect")
-def activar_claves_foraneas(conexion):
+def activar_claves_foraneas(conexion, registro):
         conexion.execute("PRAGMA foreign_keys=ON")
 
 Session = sessionmaker(bind=engine, expire_on_commit=False)

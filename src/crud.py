@@ -225,7 +225,7 @@ def actualizar_cliente(id_cliente, nombre, correo, telefono):
 # Eliminar
 
 def eliminar_categoria(id_categoria):
-    ok, mensaje = val.validar_entero(id_categoria, "La categoría")
+    ok, mensaje = val.validar_entero(id_categoria)
     if not ok:
         return False, mensaje
     with Session() as session:
@@ -240,7 +240,7 @@ def eliminar_categoria(id_categoria):
 
 
 def eliminar_equipo(id_equipo):
-    ok, mensaje = val.validar_entero(id_equipo, "El equipo")
+    ok, mensaje = val.validar_entero(id_equipo)
     if not ok:
         return False, mensaje
     with Session() as session:
@@ -255,7 +255,7 @@ def eliminar_equipo(id_equipo):
 
 
 def eliminar_cliente(id_cliente):
-    ok, mensaje = val.validar_entero(id_cliente, "El cliente")
+    ok, mensaje = val.validar_entero(id_cliente)
     if not ok:
         return False, mensaje
     with Session() as session:
