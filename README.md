@@ -10,20 +10,21 @@
 >procesar devoluciones. Los datos deben mantenerse en una base SQLite mediante SQLAlchemy ORM. 
 
 ## Dependencias
-**sqlalchemy**: 2.1.9
-**matplotlib**: 3.11.2
-**sqlite3** 
+
+ - **sqlalchemy**: 2.1.9
+ - **matplotlib**: 3.11.2
+ - **sqlite3** 
 
 ## Arquitectura
 ```
 ProyectoProgra2/
 ├── pyproject.toml
 ├── README.md
-├── ui.py       # ventanas/pestañas Tkinter
 ├── .gitignore
 └── src/
     ├── charts.py
     ├── Conexion.py
+    ├── ui.py       # ventanas/pestañas Tkinter
     ├── __init__.py
     ├── Modelo.py     
     ├── Factory.py
