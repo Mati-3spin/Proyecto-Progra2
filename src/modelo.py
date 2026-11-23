@@ -39,9 +39,13 @@ class Equipo(Base):
     precio_diario: Mapped[int] = mapped_column(Integer, nullable=False)
     stock_total: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     stock_disponible: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-
+    tipo: Mapped[str] = mapped_column(String(30), nullable=False)
     categoria: Mapped["Categoria"] = relationship(back_populates="equipos")
     arriendos: Mapped[list["Arriendo"]] = relationship(back_populates="equipo")
+
+    __mapper_args__ = {"polymorphic_on": "tipo", "polymorphic_identity": "otro"}
+    def calcular_precio(self, dias):
+        return self.precio_diario * dias
 
     def __repr__(self):
         return (f"Equipo(id={self.id}, nombre={self.nombre!r}, categoria_id={self.categoria_id}, "
