@@ -3,7 +3,6 @@ from datetime import datetime
 from sqlalchemy import String, Integer, CheckConstraint, ForeignKey, DateTime, Enum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
-
 class Base(DeclarativeBase):
     pass
 
@@ -81,7 +80,6 @@ class Casco(Equipo):
         return total 
 
 
-
 class Cliente(Base):
     __tablename__ = "cliente"
 
@@ -100,17 +98,17 @@ class Arriendo(Base):
     __tablename__ = "arriendo"
     __table_args__ = (
         CheckConstraint("cantidad > 0", name="ck_cantidad"),
+        CheckConstraint("precio_total >= 0", name="ck_precio_total"),
         CheckConstraint("fecha_fin_prevista >= fecha_inicio", name="ck_rango_arriendo_fechas"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    equipo_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("equipo.id", ondelete="RESTRICT"), nullable=False)
-    cliente_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("cliente.id", ondelete="RESTRICT"), nullable=False)
+    equipo_id: Mapped[int] = mapped_column(Integer, ForeignKey("equipo.id", ondelete="RESTRICT"), nullable=False)
+    cliente_id: Mapped[int] = mapped_column(Integer, ForeignKey("cliente.id", ondelete="RESTRICT"), nullable=False)
     fecha_inicio: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     fecha_fin_prevista: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     cantidad: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    precio_total: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     estado: Mapped[Estado] = mapped_column(Enum(Estado), default=Estado.ACTIVO, nullable=False)
 
     equipo: Mapped["Equipo"] = relationship(back_populates="arriendos")
@@ -119,4 +117,4 @@ class Arriendo(Base):
     def __repr__(self):
         return (f"Arriendo(id={self.id}, equipo_id={self.equipo_id}, cliente_id={self.cliente_id}, "
                 f"fecha_inicio={self.fecha_inicio}, fecha_fin_prevista={self.fecha_fin_prevista}, "
-                f"cantidad={self.cantidad}, estado={self.estado})")
+                f"cantidad={self.cantidad}, precio_total={self.precio_total}, estado={self.estado})")

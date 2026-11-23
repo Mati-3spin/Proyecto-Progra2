@@ -6,7 +6,7 @@ FORMATO_FECHA = "%Y-%m-%d %H:%M"
 
 def validar_texto(cadena, largo_maximo=None, campo="El texto"):
     if not isinstance(cadena, str) or cadena.strip() == "":
-        return False, f"{campo} no puede estar vacío."
+        return False, f"{campo} no puede estar en blanco."
     if largo_maximo is not None and len(cadena.strip()) > largo_maximo:
         return False, f"{campo} no puede superar los {largo_maximo} caracteres."
     return True, ""
