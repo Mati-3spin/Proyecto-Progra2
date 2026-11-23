@@ -36,8 +36,8 @@ class CreadorOtro(CreadorEquipo):
 
 
 CREADORES = {
-    "bicicleta": CreadorPelota(),
-    "kayak": CreadorCasco(),
+    "bicicleta": CreadorRaqueta(),
+    "kayak": CreadorPelota(),
     "casco": CreadorCasco(),
     "otro": CreadorOtro(),
 }
