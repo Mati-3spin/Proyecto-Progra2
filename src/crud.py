@@ -4,6 +4,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import joinedload
 from conexion import Session
 from modelo import Categoria, Equipo, Cliente, Arriendo, Estado
+from factory import obtener_creador, TIPOS
 import validacion as val
 
 log = logging.getLogger(__name__)
@@ -60,8 +61,8 @@ def _contar(session, modelo, condicion):
 
 def crear_categoria(nombre, descripcion):
     error = _primer_error(
-        val.validar_texto(nombre, 100),
-        val.validar_texto(descripcion, 150),
+        val.validar_texto(nombre, 100, campo="nombre"),
+        val.validar_texto(descripcion, 150, campo="descripcion"),
     )
     if error:
         return error
@@ -70,32 +71,30 @@ def crear_categoria(nombre, descripcion):
         return _confirmar(session, "Categoría creada.")
 
 
-def crear_equipo(nombre, categoria_id, precio_diario, stock_total):
+def crear_equipo(nombre, categoria_id, precio_diario, stock_total, tipo="otro"):
     error = _primer_error(
-        val.validar_texto(nombre, 100),
-        val.validar_entero(categoria_id),
+        val.validar_texto(nombre, 100, campo="nombre"),
+        val.validar_entero(categoria_id, campo="categoria id"),
         val.validar_precio_positivo(precio_diario),
         val.validar_stock_positivo(stock_total),
     )
     if error:
         return error
+    creador = obtener_creador(tipo)
+    if creador is None:
+        return False, f"Tipo de equipo inválido. Opciones: {', '.join(TIPOS)}."
     with Session() as session:
         if session.get(Categoria, int(categoria_id)) is None:
             return False, "La categoría seleccionada no existe."
-        session.add(Equipo(
-            nombre=nombre.strip(),
-            categoria_id=int(categoria_id),
-            precio_diario=int(precio_diario),
-            stock_total=int(stock_total),
-            stock_disponible=int(stock_total),
-        ))
+        session.add(creador.crear(
+            nombre.strip(), int(categoria_id), int(precio_diario), int(stock_total)))
         return _confirmar(session, "Equipo creado.")
 
 
 def crear_cliente(nombre, correo, telefono):
     error = _primer_error(
-        val.validar_texto(nombre, 100),
-        val.validar_texto(correo, 100),
+        val.validar_texto(nombre, 100, campo="nombre"),
+        val.validar_texto(correo, 100, campo="correo"),
         val.validar_correo(correo),
         val.validar_telefono(telefono),
     )
@@ -115,7 +114,7 @@ def consultar_categoria():
 
 def _fila_equipo(e):
     return (e.id, e.nombre, e.categoria_id, e.categoria.nombre,
-            e.precio_diario, e.stock_total, e.stock_disponible)
+            e.precio_diario, e.stock_total, e.stock_disponible, e.tipo)
 
 
 def consultar_equipo():
@@ -160,9 +159,9 @@ def consultar_arriendos_activos():
 
 def actualizar_categoria(id_categoria, nombre, descripcion):
     error = _primer_error(
-        val.validar_entero(id_categoria),
-        val.validar_texto(nombre, 100),
-        val.validar_texto(descripcion, 150),
+        val.validar_entero(id_categoria, campo="id categoria"),
+        val.validar_texto(nombre, 100, campo="nombre"),
+        val.validar_texto(descripcion, 150, descripcion="descripcion"),
     )
     if error:
         return error
@@ -177,9 +176,9 @@ def actualizar_categoria(id_categoria, nombre, descripcion):
 
 def actualizar_equipo(id_equipo, nombre, categoria_id, precio_diario, stock_total):
     error = _primer_error(
-        val.validar_entero(id_equipo),
-        val.validar_texto(nombre, 100),
-        val.validar_entero(categoria_id),
+        val.validar_entero(id_equipo, campo="id equipo"),
+        val.validar_texto(nombre, 100, campo="nombre"),
+        val.validar_entero(categoria_id, campo="categoria id"),
         val.validar_precio_positivo(precio_diario),
         val.validar_stock_positivo(stock_total),
     )
@@ -204,9 +203,9 @@ def actualizar_equipo(id_equipo, nombre, categoria_id, precio_diario, stock_tota
 
 def actualizar_cliente(id_cliente, nombre, correo, telefono):
     error = _primer_error(
-        val.validar_entero(id_cliente),
-        val.validar_texto(nombre, 100),
-        val.validar_texto(correo, 100),
+        val.validar_entero(id_cliente, campo="id cliente"),
+        val.validar_texto(nombre, 100, campo="nombre"),
+        val.validar_texto(correo, 100, campo="correo"),
         val.validar_correo(correo),
         val.validar_telefono(telefono),
     )
@@ -273,8 +272,8 @@ def eliminar_cliente(id_cliente):
 
 def crear_arriendo(equipo_id, cliente_id, fecha_inicio, fecha_fin_prevista, cantidad):
     error = _primer_error(
-        val.validar_entero(equipo_id),
-        val.validar_entero(cliente_id),
+        val.validar_entero(equipo_id, campo="equipo id"),
+        val.validar_entero(cliente_id, campo="cliente id"),
         val.validar_cantidad_positiva(cantidad),
         val.validar_fecha(fecha_inicio),
         val.validar_fecha(fecha_fin_prevista),
@@ -312,7 +311,7 @@ def crear_arriendo(equipo_id, cliente_id, fecha_inicio, fecha_fin_prevista, cant
 
 
 def devolver_arriendo(id_arriendo):
-    ok, mensaje = val.validar_entero(id_arriendo)
+    ok, mensaje = val.validar_entero(id_arriendo, campo="id arriendo")
     if not ok:
         return False, mensaje
     with Session() as session:
