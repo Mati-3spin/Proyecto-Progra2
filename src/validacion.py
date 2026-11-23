@@ -11,13 +11,9 @@ def validar_texto(cadena, largo_maximo=None, campo="El texto"):
         return False, f"{campo} no puede superar los {largo_maximo} caracteres."
     return True, ""
 
-def validar_entero(valor):
-    if isinstance(valor, bool):
-        return False, "El valor debe ser un número entero."
-    try:
-        int(str(valor).strip())
-    except ValueError:
-        return False, "El valor debe ser un número entero."
+def validar_entero(valor, campo="El valor"):
+    if isinstance(valor, bool) or not re.fullmatch(r"[+-]?[0-9]{1,9}", str(valor).strip()):
+        return False, f"{campo} debe ser un número entero (máximo 9 dígitos)."
     return True, ""
 
 
