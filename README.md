@@ -71,7 +71,7 @@ Proyecto-Progra2/
 | **Categoria** | id, nombre, descripcion | `nombre` único |
 | **Equipo** | id, nombre, categoria_id, precio_diario, stock_total, stock_disponible | `precio_diario > 0`, `stock_total >= 0`, `stock_disponible >= 0`, `stock_disponible <= stock_total` |
 | **Cliente** | id, nombre, correo, telefono | `correo` único |
-| **Arriendo** | id, equipo_id, cliente_id, fecha_inicio, fecha_fin_prevista, cantidad, estado | `cantidad > 0`, `fecha_fin_prevista >= fecha_inicio`, estado `ACTIVO` o `DEVUELTO` |
+| **Arriendo** | id, equipo_id, cliente_id, fecha_inicio, fecha_fin_prevista, cantidad,  precio_total, estado | `cantidad > 0`, `fecha_fin_prevista >= fecha_inicio`, estado `ACTIVO` o `DEVUELTO` |
 
 Relaciones:
 

@@ -1,4 +1,5 @@
 import logging
+import math
 from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import joinedload
@@ -61,8 +62,8 @@ def _contar(session, modelo, condicion):
 
 def crear_categoria(nombre, descripcion):
     error = _primer_error(
-        val.validar_texto(nombre, 100, campo="nombre"),
-        val.validar_texto(descripcion, 150, campo="descripcion"),
+        val.validar_texto(nombre, 100, campo="El nombre"),
+        val.validar_texto(descripcion, 150, campo="La descripción"),
     )
     if error:
         return error
@@ -73,8 +74,8 @@ def crear_categoria(nombre, descripcion):
 
 def crear_equipo(nombre, categoria_id, precio_diario, stock_total, tipo="otro"):
     error = _primer_error(
-        val.validar_texto(nombre, 100, campo="nombre"),
-        val.validar_entero(categoria_id, campo="categoria id"),
+        val.validar_texto(nombre, 100, campo="El nombre"),
+        val.validar_entero(categoria_id, campo="El id de la categoría"),
         val.validar_precio_positivo(precio_diario),
         val.validar_stock_positivo(stock_total),
     )
@@ -93,8 +94,8 @@ def crear_equipo(nombre, categoria_id, precio_diario, stock_total, tipo="otro"):
 
 def crear_cliente(nombre, correo, telefono):
     error = _primer_error(
-        val.validar_texto(nombre, 100, campo="nombre"),
-        val.validar_texto(correo, 100, campo="correo"),
+        val.validar_texto(nombre, 100, campo="El nombre"),
+        val.validar_texto(correo, 100, campo="El correo"),
         val.validar_correo(correo),
         val.validar_telefono(telefono),
     )
@@ -111,44 +112,36 @@ def consultar_categoria():
     sentencia = select(Categoria).order_by(Categoria.id)
     return _leer(sentencia, lambda c: (c.id, c.nombre, c.descripcion))
 
-
 def _fila_equipo(e):
     return (e.id, e.nombre, e.categoria_id, e.categoria.nombre,
             e.precio_diario, e.stock_total, e.stock_disponible, e.tipo)
 
-
 def consultar_equipo():
     sentencia = select(Equipo).options(joinedload(Equipo.categoria)).order_by(Equipo.id)
     return _leer(sentencia, _fila_equipo)
-
 
 def consultar_equipos_disponibles():
     sentencia = (select(Equipo).options(joinedload(Equipo.categoria))
                 .where(Equipo.stock_disponible > 0).order_by(Equipo.id))
     return _leer(sentencia, _fila_equipo)
 
-
 def consultar_cliente():
     sentencia = select(Cliente).order_by(Cliente.id)
     return _leer(sentencia, lambda c: (c.id, c.nombre, c.correo, c.telefono))
-
 
 def _fila_arriendo(a):
     return (a.id, a.equipo.nombre, a.cliente.nombre,
             a.fecha_inicio.strftime(val.FORMATO_FECHA),
             a.fecha_fin_prevista.strftime(val.FORMATO_FECHA),
-            a.cantidad, a.estado.value)
-
+            a.cantidad, a.estado.value, a.precio_total)
 
 def _sentencia_arriendos():
     return (select(Arriendo)
             .options(joinedload(Arriendo.equipo), joinedload(Arriendo.cliente))
             .order_by(Arriendo.id.desc()))
 
-
 def consultar_arriendo():
     return _leer(_sentencia_arriendos(), _fila_arriendo)
-
 
 def consultar_arriendos_activos():
     sentencia = _sentencia_arriendos().where(Arriendo.estado == Estado.ACTIVO)
@@ -159,9 +152,9 @@ def consultar_arriendos_activos():
 
 def actualizar_categoria(id_categoria, nombre, descripcion):
     error = _primer_error(
-        val.validar_entero(id_categoria, campo="id categoria"),
-        val.validar_texto(nombre, 100, campo="nombre"),
-        val.validar_texto(descripcion, 150, descripcion="descripcion"),
+        val.validar_entero(id_categoria, campo="El id de la categoría"),
+        val.validar_texto(nombre, 100, campo="El nombre"),
+        val.validar_texto(descripcion, 150, campo="La descripción"),
     )
     if error:
         return error
@@ -176,9 +169,9 @@ def actualizar_categoria(id_categoria, nombre, descripcion):
 
 def actualizar_equipo(id_equipo, nombre, categoria_id, precio_diario, stock_total):
     error = _primer_error(
-        val.validar_entero(id_equipo, campo="id equipo"),
-        val.validar_texto(nombre, 100, campo="nombre"),
-        val.validar_entero(categoria_id, campo="categoria id"),
+        val.validar_entero(id_equipo, campo="El id del equipo"),
+        val.validar_texto(nombre, 100, campo="El nombre"),
+        val.validar_entero(categoria_id, campo="El id de la categoría"),
         val.validar_precio_positivo(precio_diario),
         val.validar_stock_positivo(stock_total),
     )
@@ -203,9 +196,9 @@ def actualizar_equipo(id_equipo, nombre, categoria_id, precio_diario, stock_tota
 
 def actualizar_cliente(id_cliente, nombre, correo, telefono):
     error = _primer_error(
-        val.validar_entero(id_cliente, campo="id cliente"),
-        val.validar_texto(nombre, 100, campo="nombre"),
-        val.validar_texto(correo, 100, campo="correo"),
+        val.validar_entero(id_cliente, campo="El id del cliente"),
+        val.validar_texto(nombre, 100, campo="El nombre"),
+        val.validar_texto(correo, 100, campo="El correo"),
         val.validar_correo(correo),
         val.validar_telefono(telefono),
     )
@@ -224,7 +217,7 @@ def actualizar_cliente(id_cliente, nombre, correo, telefono):
 # Eliminar
 
 def eliminar_categoria(id_categoria):
-    ok, mensaje = val.validar_entero(id_categoria)
+    ok, mensaje = val.validar_entero(id_categoria, campo="El id de la categoría")
     if not ok:
         return False, mensaje
     with Session() as session:
@@ -239,7 +232,7 @@ def eliminar_categoria(id_categoria):
 
 
 def eliminar_equipo(id_equipo):
-    ok, mensaje = val.validar_entero(id_equipo)
+    ok, mensaje = val.validar_entero(id_equipo, campo="El id del equipo")
     if not ok:
         return False, mensaje
     with Session() as session:
@@ -254,7 +247,7 @@ def eliminar_equipo(id_equipo):
 
 
 def eliminar_cliente(id_cliente):
-    ok, mensaje = val.validar_entero(id_cliente)
+    ok, mensaje = val.validar_entero(id_cliente, campo="El id del cliente")
     if not ok:
         return False, mensaje
     with Session() as session:
@@ -272,8 +265,8 @@ def eliminar_cliente(id_cliente):
 
 def crear_arriendo(equipo_id, cliente_id, fecha_inicio, fecha_fin_prevista, cantidad):
     error = _primer_error(
-        val.validar_entero(equipo_id, campo="equipo id"),
-        val.validar_entero(cliente_id, campo="cliente id"),
+        val.validar_entero(equipo_id, campo="El id del equipo"),
+        val.validar_entero(cliente_id, campo="El id del cliente"),
         val.validar_cantidad_positiva(cantidad),
         val.validar_fecha(fecha_inicio),
         val.validar_fecha(fecha_fin_prevista),
@@ -297,21 +290,23 @@ def crear_arriendo(equipo_id, cliente_id, fecha_inicio, fecha_fin_prevista, cant
         if not ok:
             return False, mensaje
 
+        dias = max(1, math.ceil((fin - inicio).total_seconds() / 86400))
+        precio_total = equipo.calcular_precio(dias) * int(cantidad)
         equipo.stock_disponible -= int(cantidad)
         session.add(Arriendo(
             equipo_id=equipo.id, cliente_id=cliente.id,
             fecha_inicio=inicio, fecha_fin_prevista=fin,
-            cantidad=int(cantidad), estado=Estado.ACTIVO,
+            cantidad=int(cantidad), precio_total=precio_total, estado=Estado.ACTIVO,
         ))
         return _confirmar(
             session,
             f"Arriendo registrado: {int(cantidad)} unidad(es) de {equipo.nombre}. "
-            f"Stock disponible: {equipo.stock_disponible}.",
+            f"Total: ${precio_total}. Stock disponible: {equipo.stock_disponible}.",
         )
 
 
 def devolver_arriendo(id_arriendo):
-    ok, mensaje = val.validar_entero(id_arriendo, campo="id arriendo")
+    ok, mensaje = val.validar_entero(id_arriendo, campo="El id del arriendo")
     if not ok:
         return False, mensaje
     with Session() as session:

@@ -34,10 +34,9 @@ class CreadorOtro(CreadorEquipo):
     def fabricar(self, **datos):
         return Equipo(**datos)
 
-
 CREADORES = {
-    "bicicleta": CreadorRaqueta(),
-    "kayak": CreadorPelota(),
+    "raqueta": CreadorRaqueta(),
+    "pelota_futbol": CreadorPelota(),
     "casco": CreadorCasco(),
     "otro": CreadorOtro(),
 }
