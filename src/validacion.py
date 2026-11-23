@@ -4,13 +4,12 @@ import re
 FORMATO_FECHA = "%Y-%m-%d %H:%M"
 
 
-def validar_texto(cadena, largo_maximo=None):
+def validar_texto(cadena, largo_maximo=None, campo="El texto"):
     if not isinstance(cadena, str) or cadena.strip() == "":
-        return False, "El elemento debe existir."
+        return False, f"{campo} no puede estar vacío."
     if largo_maximo is not None and len(cadena.strip()) > largo_maximo:
-        return False, f"No puede superar los {largo_maximo} caracteres."
+        return False, f"{campo} no puede superar los {largo_maximo} caracteres."
     return True, ""
-
 
 def validar_entero(valor):
     if isinstance(valor, bool):

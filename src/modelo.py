@@ -48,6 +48,35 @@ class Equipo(Base):
                 f"precio_diario={self.precio_diario}, stock_total={self.stock_total}, "
                 f"stock_disponible={self.stock_disponible})")
 
+# Sub equipos 
+
+class Raqueta(Equipo):
+    __mapper_args__ = {"polymorphic_identity": "raqueta"}
+
+    def calcular_precio(self, dias):
+        total = self.precio_diario * dias
+        if dias >= 3:
+            total = total * 90 // 100
+        return total
+
+
+class PelotaFutbol(Equipo):
+    __mapper_args__ = {"polymorphic_identity": "pelota_futbol"}
+
+    def calcular_precio(self, dias):
+        return self.precio_diario * dias * 90 // 100
+
+
+class Casco(Equipo):
+    __mapper_args__ = {"polymorphic_identity": "casco"}
+
+    def calcular_precio(self, dias):
+        total = self.precio_diario * dias
+        if dias >= 5:
+            total = total * 90 // 100
+        return total 
+
+
 
 class Cliente(Base):
     __tablename__ = "cliente"
