@@ -110,20 +110,36 @@ Decisiones de diseño:
 | 5 | Intentar devolver el mismo arriendo | Operación rechazada; stock sigue en 5 |
 | 6 | Cerrar y reabrir la aplicación; mostrar gráficos | Datos persistentes y gráficos basados en la BD |
 
-> Pendiente...
-
 ## Capturas
 
 > Pendiente...
 
 ## Factory Method
 
-> Pendiente...
+**Problema que resuelve.** Cada tipo de equipamiento tiene su propia regla de precio. Sin un patrón, el CRUD tendría `if tipo == ...` repartidos por todo el código y habría que modificarlo cada vez que aparezca un tipo nuevo.
+
+**Estructura (`src/factory.py`).**
+
+| Rol | Clases |
+|---|---|
+| Creador base | `CreadorEquipo`, con el método fábrica `fabricar()` y la operación común `crear()` |
+| Creadores concretos | `CreadorRaqueta`, `CreadorPelota`, `CreadorCasco`, `CreadorOtro` |
+| Productos concretos | De clase padre `Equipo` proceden `Raqueta`, `PelotaFutbol`, `Casco` |
+
+Cada creador concreto redefine `fabricar()` para decidir qué clase instanciar. `crear()` es común a todos: arma los datos del equipo y deja `stock_disponible` igual a `stock_total`. El diccionario `CREADORES` y la función `obtener_creador(tipo)` eligen el creador a partir del texto del tipo (`raqueta`, `pelota_futbol`, `casco` u `otro`).
+
+**Reglas de precio por tipo** (`calcular_precio(dias)`):
+
+| Tipo | Regla |
+|---|---|
+| Raqueta | 10% de descuento desde 3 días |
+| Pelota de fútbol | 10% de descuento siempre |
+| Casco | 10% de descuento desde 5 días |
+
+Estas reglas son una decisión de diseño del equipo para mostrar el polimorfismo.
 
 ## Fuentes consultadas
 
-> Pendiente...
-* **Tkinter:**
-* **Matplotlib:**
-* **Factory Method:**
-* **SQLAlchemy:**
+* matplotlib.pyplot.bar - Matplotlib 3.11.2 documentation. (s. f.). [https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.bar.html](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.bar.html)
+* SQLAlchemy ORM - SQLAlchemy 2.0 Documentation. (s. f.). [https://docs.sqlalchemy.org/en/20/orm/](https://docs.sqlalchemy.org/en/20/orm/)
+* tkinter.ttk - Tk themed widgets. (s. f.). Python Documentation. [https://docs.python.org/3/library/tkinter.ttk.html](https://docs.python.org/3/library/tkinter.ttk.html)
